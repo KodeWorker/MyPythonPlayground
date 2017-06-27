@@ -1,6 +1,6 @@
 """
 Automate the Boring Stuff with Python
-Chapter 7 Regular Expression - Practice Projects #1 Strong Passwoard Detection
+Chapter 8 Reading and Writing Files - Practice Projects #1 Strong Passwoard Detection
 Description: detect the password with at least 8 characters long, contains both
 uppercase and lowercase characters, and has at least 1 digit.
 """
