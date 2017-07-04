@@ -17,13 +17,17 @@ import requests, os, bs4
 url = 'http://xkcd.com' # starting url
 os.makedirs('xkcd', exist_ok=True)
 while not url.endswith('#'):
-    # Download the web page
-    print('Downloading page %s...' %(url))
-    res = requests.get(url)
-    res.raise_for_status()
-    
+    try:
+        # Download the web page
+        print('Downloading page %s...' %(url))
+        res = requests.get(url)
+        res.raise_for_status()
+    except Exception as exc:
+        # Get the Prev button's url
+        prevLink = soup.select('a[rel="prev"]')[0] # identifies the <a> element with the rel attribute set to prev
+        url = 'http://xkcd.com' + prevLink.get('href')   
+        
     soup = bs4.BeautifulSoup(res.text)
-    
     # Find and download the comic image
     comicElem = soup.select('#comic img')
     if comicElem == []:
@@ -36,13 +40,8 @@ while not url.endswith('#'):
         res.raise_for_status()
         
         # Save the image to ./xkcd
-        imageFile = open(os.path.join('xkcd', os.path.basename(comicURL)), 'wb')
-        for chunk in res.iter_content(100000):
-            imageFile.write(chunk)
-        imageFile.close()
-    
-    # Get the Prev button's url
-    prevLink = soup.select('a[rel="prev"]')[0] # identifies the <a> element with the rel attribute set to prev
-    url = 'http://xkcd.com' + prevLink.get('href')
-    
+        with open(os.path.join('xkcd', os.path.basename(comicURL)), 'wb') as imageFile:
+            for chunk in res.iter_content(100000):
+                imageFile.write(chunk)
+        
 print('Done.')
